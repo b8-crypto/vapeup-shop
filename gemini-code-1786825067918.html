@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VAPEUP — Преміальний вейп-шоп</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0a;
+    --bg-deep:#000000;
+    --surface:rgba(255,255,255,.045);
+    --surface-strong:rgba(255,255,255,.08);
+    --border:rgba(255,255,255,.09);
+    --border-strong:rgba(255,255,255,.18);
+    --text:#f5f5f5;
+    --muted:#9a9a9a;
+    --muted-2:#5c5c5c;
+    --red:#e5121b;
+    --red-dim:rgba(229,18,27,.14);
+    --radius-lg:22px;
+    --radius-md:14px;
+    --ease:cubic-bezier(.2,.8,.2,1);
+    --font-d:'Syne',sans-serif;
+    --font-b:'Inter',sans-serif;
+    --font-m:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(1100px 600px at 12% -10%, rgba(229,18,27,.10), transparent 60%),
+      radial-gradient(900px 700px at 110% 10%, rgba(255,255,255,.045), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--font-b);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  a{color:inherit; text-decoration:none;}
+  ul{list-style:none;}
+  button{font-family:inherit; cursor:pointer; border:none; background:none; color:inherit;}
+  input, select, textarea{font-family:inherit; color:var(--text);}
+  img{max-width:100%; display:block;}
+  ::selection{background:var(--red); color:#fff;}
+  ::-webkit-scrollbar{height:8px; width:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:8px;}
+
+  .wrap{max-width:1320px; margin:0 auto; padding:0 32px;}
+  @media (max-width:720px){ .wrap{padding:0 18px;} }
+
+  .h1{font-family:var(--font-d); font-weight:800; letter-spacing:-.02em; line-height:1.02;}
+  .h2{font-family:var(--font-d); font-weight:700; letter-spacing:-.01em; font-size:34px; line-height:1.08;}
+  .muted{color:var(--muted);}
+
+  .glass{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    transition:border-color .35s var(--ease), box-shadow .35s var(--ease);
+  }
+  .glass:hover{border-color:var(--border-strong);}
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    font-family:var(--font-b); font-weight:600; font-size:14px;
+    padding:13px 26px; border-radius:100px; transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+    white-space:nowrap;
+  }
+  .btn:active{transform:scale(.96);}
+  .btn-cta{
+    background:var(--red); color:#fff;
+    box-shadow:0 0 0 0 rgba(229,18,27,.6);
+    animation:pulse-cta 2.6s infinite;
+  }
+  .btn-cta:hover{box-shadow:0 0 26px 4px rgba(229,18,27,.5);}
+  @keyframes pulse-cta{
+    0%,100%{box-shadow:0 0 0 0 rgba(229,18,27,.35);}
+    50%{box-shadow:0 0 0 7px rgba(229,18,27,0);}
+  }
+  .btn-ghost{border:1px solid var(--border-strong); color:var(--text);}
+  .btn-ghost:hover{border-color:var(--text); background:var(--surface);}
+  .btn-icon{
+    width:42px; height:42px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
+    border:1px solid var(--border); position:relative; transition:all .25s var(--ease);
+  }
+  .btn-icon:hover{border-color:var(--text); background:var(--surface-strong);}
+  .icon{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round;}
+
+  /* ===== AGE GATE ===== */
+  #age-gate{
+    position:fixed; inset:0; z-index:300; display:flex; align-items:center; justify-content:center;
+    background:rgba(4,6,16,.92); backdrop-filter:blur(6px); padding:20px;
+  }
+  #age-gate .card{max-width:420px; width:100%; padding:38px 32px; text-align:center;}
+  #age-gate .glyph{
+    width:56px; height:56px; margin:0 auto 18px; border-radius:16px; display:flex; align-items:center; justify-content:center;
+    background:var(--red-dim); color:var(--red); font-family:var(--font-d); font-weight:800; font-size:20px;
+  }
+  #age-gate h2{font-family:var(--font-d); font-size:22px; margin-bottom:10px;}
+  #age-gate p{color:var(--muted); font-size:14px; line-height:1.6; margin-bottom:24px;}
+  body.locked{overflow:hidden;}
+
+  /* ===== HEADER & MENU ===== */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:rgba(8,11,28,.85); backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+  }
+  .header-inner{display:flex; align-items:center; justify-content:space-between; height:78px; gap:20px;}
+  
+  .logo{font-family:var(--font-d); font-weight:800; font-size:21px; display:flex; align-items:center; gap:9px; flex-shrink:0;}
+  .logo .dot{width:8px; height:8px; border-radius:50%; background:var(--red); box-shadow:0 0 10px 2px var(--red);}
+  
+  .header-menu{
+    display:flex; align-items:center; gap:4px; 
+    background:var(--surface); border:1px solid var(--border); border-radius:100px; padding:4px 6px;
+  }
+  .header-menu button{
+    padding:8px 18px; border-radius:100px; font-size:13.5px; font-weight:500; color:var(--muted); transition:all .2s;
+  }
+  .header-menu button:hover, .header-menu button.active{
+    color:#0a0a0a; background:#f5f5f5; font-weight:600;
+  }
+  @media(max-width:1100px){ .header-menu{display:none;} }
+
+  .header-right{display:flex; align-items:center; gap:12px;}
+  
+  .search-box{
+    width:260px; display:flex; align-items:center; gap:10px;
+    background:var(--surface); border:1px solid var(--border); border-radius:100px; padding:10px 18px;
+  }
+  .search-box:focus-within{border-color:var(--text);}
+  .search-box input{background:none; border:none; outline:none; flex:1; font-size:13.5px;}
+  .search-box input::placeholder{color:var(--muted-2);}
+  @media(max-width:1300px){ .search-box{display:none;} }
+
+  .cart-count{
+    position:absolute; top:-4px; right:-4px; background:var(--red); color:#fff; font-family:var(--font-m);
+    font-size:10px; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  }
+
+  /* ===== HERO ===== */
+  .hero{padding:50px 0 30px;}
+  .hero .h1{font-size:clamp(36px, 5vw, 56px); margin-bottom:15px;}
+  .hero .h1 span{color:var(--red); text-shadow:0 0 30px rgba(229,18,27,.4);}
+  .hero-sub{font-size:16px; color:var(--muted); max-width:480px; line-height:1.6;}
+
+  /* ===== CATALOG SECTION ===== */
+  section{padding:40px 0;}
+  .section-head{display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:30px;}
+  
+  .product-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:20px;}
+  @media (max-width:980px){ .product-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:520px){ .product-grid{grid-template-columns:1fr;} }
+  
+  .product-card{padding:0; overflow:hidden; display:flex; flex-direction:column; position:relative;}
+  .product-media{
+    aspect-ratio:1/1; position:relative; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 50% 30%, rgba(255,255,255,.06), transparent 70%);
+    border-bottom:1px solid var(--border);
+    overflow:hidden;
+  }
+  .product-media img {
+    width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0;
+  }
+  .product-media .glyph{
+    width:58%; aspect-ratio:.45; border-radius:14px;
+    background:linear-gradient(165deg, #1c1c1c, #0a0a0a);
+    position:relative;
+  }
+  .product-media .glyph::after{
+    content:''; position:absolute; top:16%; left:50%; translate:-50% 0; width:52%; height:6px; border-radius:6px;
+    background:var(--pv-glow, var(--red)); box-shadow:0 0 12px 2px var(--pv-glow, var(--red));
+  }
+  .product-card .add-btn{
+    position:absolute; bottom:-46px; left:12px; right:12px; padding:10px; border-radius:100px; text-align:center; font-size:12.5px;
+    background:var(--red); border:none; color:#fff; font-weight:600; transition:bottom .3s var(--ease); z-index:2;
+  }
+  .product-media:hover .add-btn{bottom:12px;}
+  .product-body{padding:16px 18px 20px; display:flex; flex-direction:column; gap:8px; flex:1;}
+  .product-body .brand{font-size:11px; color:var(--muted-2); text-transform:uppercase; font-family:var(--font-m);}
+  .product-body h4{font-family:var(--font-d); font-size:16px; font-weight:700;}
+  .price-row{display:flex; align-items:center; justify-content:space-between; margin-top:auto;}
+  .price{font-family:var(--font-m); font-size:18px; font-weight:600;}
+  .tag{font-size:10px; font-family:var(--font-m); padding:3px 8px; border-radius:6px; background:var(--surface-strong); color:var(--muted);}
+
+  /* ===== MODALS & TOAST ===== */
+  .modal-overlay{
+    position:fixed; inset:0; z-index:200; background:rgba(4,6,16,.75); backdrop-filter:blur(4px);
+    display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  .modal-overlay.show{display:flex;}
+  .modal-box{background:var(--bg); border:1px solid var(--border-strong); border-radius:var(--radius-lg); max-width:560px; width:100%; padding:28px; position:relative; max-height:88vh; overflow:auto;}
+  .modal-close{position:absolute; top:16px; right:16px; width:36px; height:36px; border-radius:50%; border:1px solid var(--border); display:flex; align-items:center; justify-content:center;}
+  
+  .cart-item{display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border);}
+  .cart-total{font-size:20px; font-weight:700; margin:20px 0; display:flex; justify-content:space-between;}
+  .checkout-form{display:flex; flex-direction:column; gap:12px;}
+  .checkout-form input{width:100%; padding:12px; border-radius:10px; background:var(--surface); border:1px solid var(--border); outline:none;}
+  .checkout-form input:focus{border-color:var(--red);}
+
+  .admin-form{display:flex; flex-direction:column; gap:10px; margin-bottom:20px;}
+  .admin-form input, .admin-form select{padding:10px; border-radius:8px; background:var(--surface); border:1px solid var(--border);}
+  .admin-table{width:100%; text-align:left; border-collapse:collapse; margin-top:10px;}
+  .admin-table th, .admin-table td{padding:10px; border-bottom:1px solid var(--border); font-size:14px;}
+
+  .toast{
+    position:fixed; bottom:26px; left:50%; translate:-50% 0; z-index:250;
+    background:rgba(20,20,20,.95); border:1px solid var(--border-strong);
+    padding:12px 22px; border-radius:100px; font-size:13.5px;
+    box-shadow:0 10px 30px rgba(0,0,0,.5); display:none; align-items:center; gap:10px;
+  }
+  .toast.show{display:flex;}
+
+  footer{background:var(--bg-deep); border-top:1px solid var(--border); padding:40px 0; margin-top:40px; text-align:center;}
+</style>
+</head>
+<body class="locked">
+
+  <!-- AGE GATE -->
+  <div id="age-gate">
+    <div class="card glass">
+      <div class="glyph">18+</div>
+      <h2>Вам уже виповнилося 18 років?</h2>
+      <p>Цей сайт містить продукцію для повнолітніх.</p>
+      <button class="btn btn-cta" style="width:100%" onclick="confirmAge()">Так, мені є 18</button>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="wrap header-inner">
+      <a href="#" class="logo" onclick="filterCategory('all', event)"><span class="dot"></span> vapeup</a>
+      
+      <!-- ЦЕНТРАЛЬНЕ МЕНЮ -->
+      <nav class="header-menu">
+        <button class="active" onclick="filterCategory('all', event)">Головна</button>
+        <button onclick="filterCategory('all', event)">Каталог</button>
+        <button onclick="filterCategory('Pod', event)">Пристрої</button>
+        <button onclick="filterCategory('Liquid', event)">Рідини</button>
+        <button onclick="filterCategory('Dispo', event)">Аксесуари</button>
+      </nav>
+
+      <div class="header-right">
+        <div class="search-box">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="search-input" placeholder="Знайти смак, бренд..." oninput="handleSearch()">
+        </div>
+
+        <button class="btn-icon" title="Профіль">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </button>
+
+        <button class="btn-icon" title="Обране">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+        
+        <button class="btn-icon" title="Кошик" onclick="openCart()">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-count" id="cart-badge">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- HERO -->
+    <section class="hero">
+      <h1 class="h1">Оригінальні пристрої<br>для <span>чистої пари</span></h1>
+      <p class="hero-sub">Сертифіковані девайси, рідини від перевірених брендів та смаки, які запам'ятовуються. Жодних підробок — тільки оригінал з гарантією.</p>
+    </section>
+
+    <!-- CATALOG -->
+    <section id="catalog">
+      <div class="section-head">
+        <h2 class="h2" id="catalog-title">Каталог товарів</h2>
+      </div>
+      <div class="product-grid" id="product-container"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div style="margin-bottom:15px;" class="muted">© 2026 VAPEUP. Всі права захищені.</div>
+      <button onclick="openAdmin()" style="font-size:12px; color:var(--muted); text-decoration:underline;">Вхід для адміністратора</button>
+    </div>
+  </footer>
+
+  <!-- CART MODAL -->
+  <div id="modal-cart" class="modal-overlay">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('modal-cart')">✕</button>
+      <h3 class="h2" style="font-size:24px; margin-bottom:20px;">Ваш кошик</h3>
+      <div id="cart-items"></div>
+      <div class="cart-total"><span>Разом:</span> <span id="cart-total-price">0 ₴</span></div>
+      
+      <form class="checkout-form" id="checkout-form" onsubmit="sendOrder(event)">
+        <input type="text" id="order-name" placeholder="Ваше ім'я" required>
+        <input type="tel" id="order-phone" placeholder="Ваш телефон" required>
+        <input type="text" id="order-address" placeholder="Місто, відділення пошти" required>
+        <button type="submit" class="btn btn-cta" style="width:100%; margin-top:10px;">Оформити замовлення</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADMIN MODAL -->
+  <div id="modal-admin" class="modal-overlay">
+    <div class="modal-box" style="max-width:700px;">
+      <button class="modal-close" onclick="closeModal('modal-admin')">✕</button>
+      <h3 class="h2" style="font-size:24px; margin-bottom:20px;">Адмін-панель</h3>
+      
+      <div class="admin-form">
+        <h4>Додати товар з фото</h4>
+        <input type="text" id="ad-title" placeholder="Назва">
+        <input type="text" id="ad-brand" placeholder="Бренд">
+        <input type="number" id="ad-price" placeholder="Ціна">
+        <select id="ad-category">
+          <option value="Pod">Пристрої</option>
+          <option value="Liquid">Рідини</option>
+          <option value="Dispo">Аксесуари</option>
+        </select>
+        <input type="text" id="ad-image" placeholder="URL фото (наприклад: https://... або посилання на картинку)">
+        <input type="text" id="ad-color" placeholder="Колір підсвічування, якщо без фото (#e5121b)">
+        <button class="btn btn-ghost" onclick="addNewProduct()">Додати товар</button>
+      </div>
+
+      <h4>Список товарів</h4>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Назва</th>
+            <th>Категорія</th>
+            <th>Ціна</th>
+            <th>Дія</th>
+          </tr>
+        </thead>
+        <tbody id="admin-product-list"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"><span>🛒 Товар додано до кошика!</span></div>
+
+  <script>
+    const BOT_TOKEN = '8258029956:AAG3CB7qcX0qg9lEqYB8xeO-nry7RHaUc50'; 
+    const CHAT_ID = '1208171350';
+
+    let defaultProducts = [
+      { id: 1, title: 'VAPEUP Cyber Pod', brand: 'VAPEUP LABS', price: 1199, category: 'Pod', image: '', color: '#e5121b' },
+      { id: 2, title: 'Neon Juice Salt 30ml', brand: 'NEON LIQUIDS', price: 350, category: 'Liquid', image: '', color: '#00d4ff' },
+      { id: 3, title: 'Pulse Bar 9000 Puffs', brand: 'PULSE', price: 650, category: 'Dispo', image: '', color: '#00ff88' }
+    ];
+
+    let products = JSON.parse(localStorage.getItem('vapeProducts')) || defaultProducts;
+    let cart = [];
+    let currentCategory = 'all';
+
+    function saveProducts() {
+      localStorage.setItem('vapeProducts', JSON.stringify(products));
+      renderProducts();
+      renderAdminList();
+    }
+
+    function renderProducts(list = products) {
+      const container = document.getElementById('product-container');
+      container.innerHTML = '';
+      if(list.length === 0) {
+        container.innerHTML = '<p class="muted">Товарів не знайдено</p>';
+        return;
+      }
+      list.forEach(p => {
+        let catName = { 'Pod': 'Пристрій', 'Liquid': 'Рідина', 'Dispo': 'Аксесуар' }[p.category] || p.category;
+        
+        // Відображення фото, якщо воно вказане, інакше дефолтний дизайнерський елемент
+        let mediaContent = p.image 
+          ? `<img src="${p.image}" alt="${p.title}">` 
+          : `<div class="glyph" style="--pv-glow:${p.color || '#e5121b'}"></div>`;
+
+        container.innerHTML += `
+          <div class="product-card glass">
+            <div class="product-media">
+              ${mediaContent}
+              <button class="add-btn" onclick="addToCart(${p.id})">У кошик</button>
+            </div>
+            <div class="product-body">
+              <span class="brand">${p.brand}</span>
+              <h4>${p.title}</h4>
+              <div class="price-row">
+                <div class="price">${p.price} ₴</div>
+                <span class="tag">${catName}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function filterCategory(category, event) {
+      currentCategory = category;
+      if(event && event.target) {
+        document.querySelectorAll('.header-menu button').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+      }
+      let titles = { 'all': 'Каталог товарів', 'Pod': 'Пристрої', 'Liquid': 'Рідини', 'Dispo': 'Аксесуари' };
+      document.getElementById('catalog-title').innerText = titles[category] || 'Каталог товарів';
+
+      if(category === 'all') {
+        renderProducts(products);
+      } else {
+        renderProducts(products.filter(p => p.category === category));
+      }
+    }
+
+    function handleSearch() {
+      const query = document.getElementById('search-input').value.toLowerCase();
+      let base = currentCategory === 'all' ? products : products.filter(p => p.category === currentCategory);
+      renderProducts(base.filter(p => p.title.toLowerCase().includes(query) || p.brand.toLowerCase().includes(query)));
+    }
+
+    function addToCart(id) {
+      cart.push(products.find(p => p.id === id));
+      document.getElementById('cart-badge').innerText = cart.length;
+      showToast('🛒 Додано до кошика!');
+    }
+
+    function renderCart() {
+      const div = document.getElementById('cart-items');
+      let total = 0; div.innerHTML = '';
+      if(cart.length === 0) { div.innerHTML = '<p class="muted">Кошик порожній</p>'; }
+      cart.forEach((item, index) => {
+        total += parseInt(item.price);
+        div.innerHTML += `
+          <div class="cart-item">
+            <div><h5>${item.title}</h5><p class="muted" style="font-size:13px;">${item.price} ₴</p></div>
+            <button onclick="removeFromCart(${index})" style="color:var(--red); font-size:18px;">✕</button>
+          </div>
+        `;
+      });
+      document.getElementById('cart-total-price').innerText = total + ' ₴';
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      document.getElementById('cart-badge').innerText = cart.length;
+      renderCart();
+    }
+
+    function openCart() { renderCart(); document.getElementById('modal-cart').classList.add('show'); }
+
+    async function sendOrder(e) {
+      e.preventDefault();
+      if(cart.length === 0) return alert('Кошик порожній!');
+      const name = document.getElementById('order-name').value;
+      const phone = document.getElementById('order-phone').value;
+      const address = document.getElementById('order-address').value;
+      let total = 0;
+      let list = cart.map(i => { total += parseInt(i.price); return `- ${i.title} (${i.price} ₴)`; }).join('\n');
+      const msg = `🔥 НОВЕ ЗАМОВЛЕННЯ!\n\n👤 Ім'я: ${name}\n📞 Телефон: ${phone}\n📍 Адреса: ${address}\n\n📦 Товари:\n${list}\n\n💰 РАЗОМ: ${total} ₴`;
+
+      try {
+        let res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ chat_id: CHAT_ID, text: msg })
+        });
+        if(res.ok) {
+          showToast('✅ Замовлення успішно надіслано!');
+          cart = []; document.getElementById('cart-badge').innerText = '0';
+          closeModal('modal-cart'); document.getElementById('checkout-form').reset();
+        } else { alert('Помилка надсилання. Перевірте BOT_TOKEN.'); }
+      } catch (err) { alert('Помилка мережі.'); }
+    }
+
+    function openAdmin() {
+      let pass = prompt('Пароль адміністратора:');
+      if(pass === 'admin123') { renderAdminList(); document.getElementById('modal-admin').classList.add('show'); }
+      else if(pass !== null) alert('Невірний пароль!');
+    }
+
+    function renderAdminList() {
+      let tbody = document.getElementById('admin-product-list');
+      tbody.innerHTML = '';
+      products.forEach(p => {
+        tbody.innerHTML += `<tr><td><b>${p.title}</b><br><small class="muted">${p.brand}</small></td><td>${p.category}</td><td>${p.price} ₴</td><td><button onclick="deleteProduct(${p.id})" style="color:var(--red);">Видалити</button></td></tr>`;
+      });
+    }
+
+    function addNewProduct() {
+      let title = document.getElementById('ad-title').value;
+      let brand = document.getElementById('ad-brand').value || 'VAPEUP';
+      let price = document.getElementById('ad-price').value;
+      let category = document.getElementById('ad-category').value;
+      let image = document.getElementById('ad-image').value;
+      let color = document.getElementById('ad-color').value || '#ffffff';
+      
+      if(!title || !price) return alert('Заповніть назву та ціну!');
+      let newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+      products.push({ id: newId, title, brand, price: parseInt(price), category, image, color });
+      saveProducts();
+      
+      document.getElementById('ad-title').value = '';
+      document.getElementById('ad-brand').value = '';
+      document.getElementById('ad-price').value = '';
+      document.getElementById('ad-image').value = '';
+      document.getElementById('ad-color').value = '';
+      showToast('📦 Товар додано!');
+    }
+
+    function deleteProduct(id) { products = products.filter(p => p.id !== id); saveProducts(); }
+    function confirmAge() { document.getElementById('age-gate').style.display = 'none'; document.body.classList.remove('locked'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+    function showToast(text) {
+      let t = document.getElementById('toast'); t.querySelector('span').innerText = text;
+      t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
+    }
+    window.onload = () => renderProducts();
+  </script>
+</body>
+</html>
